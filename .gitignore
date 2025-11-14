@@ -1,0 +1,12 @@
+# build artifacts:
+*.d
+*.o
+*.su
+*.bin
+*.elf
+*.hex
+
+build/
+
+# editor:
+*~

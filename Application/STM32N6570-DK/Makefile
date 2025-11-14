@@ -89,6 +89,9 @@ C_SOURCES += ../../Middlewares/AI_Runtime/Npu/ll_aton/ll_aton_lib_sw_operators.c
 
 
 # video encoder sources
+
+C_SOURCES += ../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_ll_venc.c
+C_SOURCES += Src/venc.c
 C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264SequenceParameterSet.c
 C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264PictureBuffer.c
 C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264CodeFrame.c
