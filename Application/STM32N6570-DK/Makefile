@@ -88,6 +88,32 @@ C_SOURCES += ../../Middlewares/AI_Runtime/Npu/ll_aton/ll_aton_lib.c
 C_SOURCES += ../../Middlewares/AI_Runtime/Npu/ll_aton/ll_aton_lib_sw_operators.c
 
 
+# video encoder sources
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264SequenceParameterSet.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264PictureBuffer.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264CodeFrame.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264Mad.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264Sei.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264NalUnit.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264PutBits.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264EncApi.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264Slice.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264RateControl.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/h264encapi_ext.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264Init.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264Denoise.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264PictureParameterSet.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264Cabac.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/common/encasiccontroller_v2.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/common/encswhwregisters.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/common/encpreprocess.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/common/encasiccontroller.c
+C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/common/encInputLineBuffer.c
+C_SOURCES += ../../Middlewares/ST/VideoEncoder_EWL/ewl_impl.c
+
+# test code:
+#C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264TestId.c
+
 # ASM sources
 ASM_SOURCES += ../../STM32Cube_FW_N6/Drivers/CMSIS/Device/ST/STM32N6xx/Source/Templates/gcc/startup_stm32n657xx_fsbl.s
 
@@ -165,6 +191,12 @@ C_INCLUDES += -I../../Middlewares/AI_Runtime/Inc
 C_INCLUDES += -I../../Middlewares/AI_Runtime/Npu/Devices/STM32N6XX
 C_INCLUDES += -I../../STM32Cube_FW_N6/Utilities/lcd
 C_INCLUDES += -I../../STM32Cube_FW_N6/Drivers/BSP/Components/aps256xx
+
+# video encoder
+C_INCLUDES += -I../../Middlewares/Third_Party/VideoEncoder/inc/
+C_INCLUDES += -I../../Middlewares/Third_Party/VideoEncoder/source/h264/
+C_INCLUDES += -I../../Middlewares/Third_Party/VideoEncoder/source/common/
+C_INCLUDES += -I../../Middlewares/ST/VideoEncoder_EWL/
 
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fstack-usage -fdata-sections -ffunction-sections -fcyclomatic-complexity
 CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fstack-usage -fdata-sections -ffunction-sections -fcyclomatic-complexity
