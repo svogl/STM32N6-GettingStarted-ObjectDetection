@@ -28,6 +28,7 @@
 LL_ATON_DECLARE_NAMED_NN_INSTANCE_AND_INTERFACE(Default);
 #include "app_camerapipeline.h"
 #include "main.h"
+#include "venc.h"
 #include <stdio.h>
 #include "app_config.h"
 #include "crop_img.h"
@@ -151,6 +152,13 @@ int main(void)
 {
 
   Hardware_init();
+
+  // init once, set up HAL & hardware
+  int ret = venc_init();
+  int vencAvailable = ret == 0;
+  if (ret != 0) {
+	  printf("VENC INIT FAILED WITH %d - skipping\n", ret);
+  }
 
   /*** NN Init ****************************************************************/
   uint32_t pitch_nn = 0;
