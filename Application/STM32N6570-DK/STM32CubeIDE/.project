@@ -252,9 +252,19 @@
 			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal.c</locationURI>
 		</link>
 		<link>
+			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_sd.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_sd.c</locationURI>
+		</link>
+		<link>
 			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_ll_venc.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_ll_venc.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_ll_sdmmc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_ll_sdmmc.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_bsec.c</name>
@@ -395,6 +405,11 @@
 			<name>Drivers/BSP/STM32N6570-DK/stm32n6570_discovery.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_sd.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_sd.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.c</name>

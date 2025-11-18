@@ -56,6 +56,7 @@ C_SOURCES += ../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_ha
 C_SOURCES += ../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_xspi.c
 C_SOURCES += ../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_bsec.c
 C_SOURCES += ../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery.c
+C_SOURCES += ../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_sd.c
 C_SOURCES += ../../STM32Cube_FW_N6/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.c
 C_SOURCES += ../../Middlewares/Camera_Middleware/cmw_camera.c
 C_SOURCES += ../../Middlewares/Camera_Middleware/cmw_utils.c
@@ -113,6 +114,10 @@ C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/common/encpreproc
 C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/common/encasiccontroller.c
 C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/common/encInputLineBuffer.c
 C_SOURCES += ../../Middlewares/ST/VideoEncoder_EWL/ewl_impl.c
+
+# sd card
+C_SOURCES += ../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_sd.c
+C_SOURCES += ../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_ll_sdmmc.c
 
 # test code:
 #C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264TestId.c

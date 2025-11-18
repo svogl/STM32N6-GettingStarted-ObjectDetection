@@ -35,7 +35,7 @@
 #define FRAMERATE 30
 /* number of frames to film and encode */
 #define VIDEO_FRAME_NB 10
-#define USE_SD_AS_OUTPUT 0
+#define USE_SD_AS_OUTPUT 1
 
 /* Private macro -------------------------------------------------------------*/
 
