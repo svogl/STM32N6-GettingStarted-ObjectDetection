@@ -10,3 +10,11 @@ build/
 
 # editor:
 *~
+\#*
+
+# local settings
+Application/STM32N6570-DK/STM32CubeIDE/.settings/
+
+
+*.sh
+Application/STM32N6570-DK/STM32CubeIDE/Debug/

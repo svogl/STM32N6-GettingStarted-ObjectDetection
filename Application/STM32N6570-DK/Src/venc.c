@@ -138,14 +138,14 @@ int erase_enc_output(void){
 int venc_init(void)
 {
   /* erase output*/
-  TRACE_MAIN("erasing flash output blocks\n");
-  erase_enc_output();
-  TRACE_MAIN("Done erasing output flash blocks\n");
-
-#if USE_SD_AS_OUTPUT
-  /* wait for erase operation to be done */
-  while(BSP_SD_GetCardState(0) != SD_TRANSFER_OK);
-#endif
+//  TRACE_MAIN("erasing flash output blocks\n");
+//  erase_enc_output();
+//  TRACE_MAIN("Done erasing output flash blocks\n");
+//
+//#if USE_SD_AS_OUTPUT
+//  /* wait for erase operation to be done */
+//  while(BSP_SD_GetCardState(0) != SD_TRANSFER_OK);
+//#endif
   /* initialize VENC */
   LL_VENC_Init();
 

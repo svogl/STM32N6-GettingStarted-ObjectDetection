@@ -42,6 +42,14 @@ CLASSES_TABLE;
 #define LCD_FG_FRAMEBUFFER_SIZE  (LCD_FG_WIDTH * LCD_FG_HEIGHT * 2)
 
 
+/* enable trace if possible */
+#if USE_COM_LOG || defined(TERMINAL_IO)
+#define TRACE_MAIN(...) printf(__VA_ARGS__)
+#else
+#define TRACE_MAIN(...)
+#endif /* USE_COM_LOG || defined(TERMINAL_IO) */
+
+
 typedef struct
 {
   uint32_t X0;
@@ -152,6 +160,30 @@ int main(void)
 {
 
   Hardware_init();
+
+  /* Check expected frequency */
+  /* UART log */
+#if USE_COM_LOG
+  COM_InitTypeDef COM_Init;
+
+  /* Initialize COM init structure */
+  COM_Init.BaudRate   = 115200;
+  COM_Init.WordLength = COM_WORDLENGTH_8B;
+  COM_Init.StopBits   = COM_STOPBITS_1;
+  COM_Init.Parity     = COM_PARITY_NONE;
+  COM_Init.HwFlowCtl  = COM_HWCONTROL_NONE;
+
+  BSP_COM_Init(COM1, &COM_Init);
+
+  if (BSP_COM_SelectLogPort(COM1) != BSP_ERROR_NONE)
+  {
+    TRACE_MAIN("failed to set up log port\n");
+    Error_Handler();
+  }
+#endif
+
+
+  sdcard_init();
 
   // init once, set up HAL & hardware
   int ret = venc_init();
@@ -388,6 +420,8 @@ static void Security_Config(void)
   HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_DCMIPP, &RIMC_master);
   HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_LTDC1 , &RIMC_master);
   HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_LTDC2 , &RIMC_master);
+  HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_SDMMC2, &RIMC_master);
+  HAL_RIF_RIMC_ConfigMasterAttributes(RIF_MASTER_INDEX_VENC  , &RIMC_master);
   HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_NPU , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
   HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_DMA2D , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
   HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_CSI    , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
@@ -395,6 +429,8 @@ static void Security_Config(void)
   HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_LTDC   , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
   HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_LTDCL1 , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
   HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_LTDCL2 , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
+  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_SDMMC2 , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
+  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_VENC   , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_PRIV);
 }
 
 static void IAC_Config(void)
@@ -647,6 +683,19 @@ static void SystemClock_Config(void)
   {
     while (1);
   }
+
+  // SDMMC2
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_SDMMC2;
+  PeriphClkInit.Sdmmc2ClockSelection = RCC_SDMMC2CLKSOURCE_IC4;
+  PeriphClkInit.ICSelection[RCC_IC4].ClockSelection = RCC_ICCLKSOURCE_PLL1;
+  PeriphClkInit.ICSelection[RCC_IC4].ClockDivider = 6;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+  {
+    while (1);
+  }
+
 }
 
 void HAL_CACHEAXI_MspInit(CACHEAXI_HandleTypeDef *hcacheaxi)
@@ -662,6 +711,14 @@ void HAL_CACHEAXI_MspDeInit(CACHEAXI_HandleTypeDef *hcacheaxi)
   __HAL_RCC_CACHEAXIRAM_MEM_CLK_DISABLE();
   __HAL_RCC_CACHEAXI_CLK_DISABLE();
   __HAL_RCC_CACHEAXI_FORCE_RESET();
+}
+
+
+void Error_Handler()
+{
+	// TODO: turn off peripherals to save energy, go blink for 30s, then reboot
+	while (1) {
+	}
 }
 
 #ifdef  USE_FULL_ASSERT

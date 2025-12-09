@@ -88,6 +88,7 @@ C_SOURCES += ../../Middlewares/AI_Runtime/Npu/ll_aton/ll_sw_integer.c
 C_SOURCES += ../../Middlewares/AI_Runtime/Npu/ll_aton/ll_aton_lib.c
 C_SOURCES += ../../Middlewares/AI_Runtime/Npu/ll_aton/ll_aton_lib_sw_operators.c
 
+# UART - debugging
 
 # video encoder sources
 
@@ -114,13 +115,31 @@ C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/common/encpreproc
 C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/common/encasiccontroller.c
 C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/common/encInputLineBuffer.c
 C_SOURCES += ../../Middlewares/ST/VideoEncoder_EWL/ewl_impl.c
+# test code:
+#C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264TestId.c
 
 # sd card
 C_SOURCES += ../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_sd.c
 C_SOURCES += ../../STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_ll_sdmmc.c
+C_SOURCES += Src/sdcard.c
 
-# test code:
-#C_SOURCES += ../../Middlewares/Third_Party/VideoEncoder/source/h264/H264TestId.c
+# fatfs
+C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/diskio.c
+C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/ffsystem_baremetal.c
+C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/ffunicode.c
+C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/ff.c
+C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/ffsystem_cmsis_os.c
+C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/ff_gen_drv.c
+C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/ffsystem_template.c
+C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/drivers/sd/sd_diskio.c
+# C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/drivers/sd/sd_diskio_dma_rtos.c
+C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/drivers/sd/sd_diskio_dma_standalone.c
+
+C_INCLUDES += -I../../Middlewares/ST/stm32-mw-fatfs/source
+C_INCLUDES += -I../../Middlewares/ST/stm32-mw-fatfs/source/drivers/sd
+C_INCLUDES += -I../../Middlewares/ST/stm32-mw-fatfs/source/drivers/sram
+C_INCLUDES += -I../../Middlewares/ST/stm32-mw-fatfs/source/drivers/usb_host/
+
 
 # ASM sources
 ASM_SOURCES += ../../STM32Cube_FW_N6/Drivers/CMSIS/Device/ST/STM32N6xx/Source/Templates/gcc/startup_stm32n657xx_fsbl.s

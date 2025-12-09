@@ -122,6 +122,11 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Src/venc.c</locationURI>
 		</link>
 		<link>
+			<name>Application/sdcard.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Src/sdcard.c</locationURI>
+		</link>
+		<link>
 			<name>Application/mcu_cache.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/AI_Runtime/Npu/Devices/STM32N6XX/mcu_cache.c</locationURI>
@@ -251,6 +256,16 @@
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal.c</locationURI>
 		</link>
+                <link>
+                        <name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart.c</name>
+                        <type>1</type>
+                        <locationURI>PARENT-3-PROJECT_LOC/STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_uart.c</locationURI>
+                </link>
+                <link>
+                        <name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart_ex.c</name>
+                        <type>1</type>
+                        <locationURI>PARENT-3-PROJECT_LOC/STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_uart_ex.c</locationURI>
+                </link>
 		<link>
 			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_sd.c</name>
 			<type>1</type>
@@ -461,5 +476,36 @@
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/Camera_Middleware/sensors/vd6g/vd6g.c</locationURI>
 		</link>
+		<link>
+			<name>Middlewares/ST/stm32-mw-fatfs/source/diskio.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/ST/stm32-mw-fatfs/source/diskio.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/ST/stm32-mw-fatfs/source/ff.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/ST/stm32-mw-fatfs/source/ff.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/ST/stm32-mw-fatfs/source/ff_gen_drv.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/ST/stm32-mw-fatfs/source/ff_gen_drv.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/ST/stm32-mw-fatfs/source/ffsystem_baremetal.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/ST/stm32-mw-fatfs/source/ffsystem_baremetal.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/ST/stm32-mw-fatfs/source/drivers/sd/sd_diskio.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/ST/stm32-mw-fatfs/source/drivers/sd/sd_diskio.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/ST/stm32-mw-fatfs/source/drivers/sd/sd_diskio_dma_standalone.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/ST/stm32-mw-fatfs/source/drivers/sd/sd_diskio_dma_standalone.c</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>
+

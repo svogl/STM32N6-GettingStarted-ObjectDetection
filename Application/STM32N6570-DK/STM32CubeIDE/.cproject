@@ -79,6 +79,8 @@
 									<listOptionValue builtIn="false" value="../../../../Middlewares/Third_Party/VideoEncoder/inc"/>
 									<listOptionValue builtIn="false" value="../../../../Middlewares/Third_Party/VideoEncoder/source/common"/>
 									<listOptionValue builtIn="false" value="../../../../Middlewares/Third_Party/VideoEncoder/source/h264"/>
+									<listOptionValue builtIn="false" value="../../../../Middlewares/ST/stm32-mw-fatfs/source"/>
+									<listOptionValue builtIn="false" value="../../../../Middlewares/ST/stm32-mw-fatfs/source/drivers/sd"/>
 								</option>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.fdata.458051802" name="Place data in their own sections (-fdata-sections)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.fdata" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1749819410" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
