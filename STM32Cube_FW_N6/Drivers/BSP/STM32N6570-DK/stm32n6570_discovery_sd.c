@@ -324,7 +324,7 @@ __weak HAL_StatusTypeDef MX_SDMMC1_SD_Init(SD_HandleTypeDef *hsd)
   hsd->Instance                 = SDMMC2;
   hsd->Init.ClockEdge           = SDMMC_CLOCK_EDGE_RISING;
   hsd->Init.ClockPowerSave      = SDMMC_CLOCK_POWER_SAVE_DISABLE;
-  hsd->Init.BusWide             = SDMMC_BUS_WIDE_1B;
+  hsd->Init.BusWide             = SDMMC_BUS_WIDE_4B;
   hsd->Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_DISABLE;
   hsd->Init.ClockDiv            = SDMMC_NSpeed_CLK_DIV;
 
@@ -915,6 +915,40 @@ static void SD_MspInit(SD_HandleTypeDef *hsd)
     gpio_init_structure.Pin = GPIO_PIN_4;
     HAL_GPIO_Init(GPIOE, &gpio_init_structure);
 
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOE_CLK_ENABLE();
+
+    /**SDMMC2 GPIO Configuration -- from cubemx
+    PC4     ------> SDMMC2_D0
+    PC5     ------> SDMMC2_D1
+    PC0     ------> SDMMC2_D2
+    PC2     ------> SDMMC2_CK
+    PE4     ------> SDMMC2_D3
+    PC3     ------> SDMMC2_CMD
+    */
+    gpio_init_structure.Pin = GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_0|GPIO_PIN_3;
+    gpio_init_structure.Mode = GPIO_MODE_AF_PP;
+    gpio_init_structure.Pull = GPIO_NOPULL;
+    gpio_init_structure.Speed = GPIO_SPEED_FREQ_MEDIUM;
+    gpio_init_structure.Alternate = GPIO_AF11_SDMMC2;
+    HAL_GPIO_Init(GPIOC, &gpio_init_structure);
+
+
+    gpio_init_structure.Pin = GPIO_PIN_2;
+    gpio_init_structure.Mode = GPIO_MODE_AF_PP;
+    gpio_init_structure.Pull = GPIO_NOPULL;
+    gpio_init_structure.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    gpio_init_structure.Alternate = GPIO_AF11_SDMMC2;
+    HAL_GPIO_Init(GPIOC, &gpio_init_structure);
+
+    gpio_init_structure.Pin = GPIO_PIN_4;
+    gpio_init_structure.Mode = GPIO_MODE_AF_PP;
+    gpio_init_structure.Pull = GPIO_NOPULL;
+    gpio_init_structure.Speed = GPIO_SPEED_FREQ_MEDIUM;
+    gpio_init_structure.Alternate = GPIO_AF11_SDMMC2;
+    HAL_GPIO_Init(GPIOE, &gpio_init_structure);
+
+
     /* NVIC configuration for SDMMC1 interrupts */
     HAL_NVIC_SetPriority(SDMMC2_IRQn, BSP_SD_IT_PRIORITY, 0);
     HAL_NVIC_EnableIRQ(SDMMC2_IRQn);
@@ -945,6 +979,26 @@ static void SD_MspDeInit(SD_HandleTypeDef *hsd)
 
     /* Disable SDMMC1 clock */
     __HAL_RCC_SDMMC1_CLK_DISABLE();
+
+    // from VENC_sdcard
+    /* Peripheral clock disable */
+    __HAL_RCC_SDMMC2_CLK_DISABLE();
+
+    /**SDMMC2 GPIO Configuration
+    PC4     ------> SDMMC2_D0
+    PC5     ------> SDMMC2_D1
+    PC0     ------> SDMMC2_D2
+    PC2     ------> SDMMC2_CK
+    PE4     ------> SDMMC2_D3
+    PC3     ------> SDMMC2_CMD
+    */
+    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_0|GPIO_PIN_2
+                          |GPIO_PIN_3);
+
+    HAL_GPIO_DeInit(GPIOE, GPIO_PIN_4);
+
+
+
   }
 }
 
