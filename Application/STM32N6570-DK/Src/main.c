@@ -186,7 +186,7 @@ int main(void)
   sdcard_init();
 
   // init once, set up HAL & hardware
-  int ret = venc_init();
+  int ret = 1;//venc_init();
   int vencAvailable = ret == 0;
   if (ret != 0) {
 	  printf("VENC INIT FAILED WITH %d - skipping\n", ret);
@@ -263,6 +263,7 @@ int main(void)
 }
 
 
+
 static void Hardware_init(void)
 {
   /* Power on ICACHE */
@@ -305,7 +306,6 @@ static void Hardware_init(void)
 
   IAC_Config();
   set_clk_sleep_mode();
-
 }
 
 static void Run_Inference(void) {
@@ -697,6 +697,7 @@ static void SystemClock_Config(void)
   }
 
 }
+
 
 void HAL_CACHEAXI_MspInit(CACHEAXI_HandleTypeDef *hcacheaxi)
 {
