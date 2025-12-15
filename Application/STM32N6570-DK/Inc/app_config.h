@@ -45,7 +45,7 @@
 /* Classes */
 #define NB_CLASSES   (1)
 #define CLASSES_TABLE const char* classes_table[NB_CLASSES] = {\
-   "person"}\
+   "human"}\
 
 /* I/O configuration */
 /* Postprocessing ST_YOLO_X configuration */

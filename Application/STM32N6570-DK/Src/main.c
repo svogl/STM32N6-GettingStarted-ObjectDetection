@@ -28,6 +28,7 @@
 LL_ATON_DECLARE_NAMED_NN_INSTANCE_AND_INTERFACE(Default);
 #include "app_camerapipeline.h"
 #include "main.h"
+#include "sdcard.h"
 #include "venc.h"
 #include <stdio.h>
 #include "app_config.h"
@@ -182,15 +183,16 @@ int main(void)
   }
 #endif
 
-
-  sdcard_init();
+  printf("%s():%d\r\n", __func__, __LINE__);
+//  sdcard_init();
 
   // init once, set up HAL & hardware
-  int ret = 1;//venc_init();
+  int ret = 1;// venc_init();
   int vencAvailable = ret == 0;
   if (ret != 0) {
 	  printf("VENC INIT FAILED WITH %d - skipping\n", ret);
   }
+  printf("%s():%d\r\n", __func__, __LINE__);
 
   /*** NN Init ****************************************************************/
   uint32_t pitch_nn = 0;
@@ -199,6 +201,7 @@ int main(void)
   float32_t *nn_out[MAX_NUMBER_OUTPUT] = {0};
   int32_t nn_out_len[MAX_NUMBER_OUTPUT] = {0};
   NeuralNetwork_init(&nn_in_len, nn_out, &number_output, nn_out_len);
+  printf("%s():%d\r\n", __func__, __LINE__);
 
   /*** Post Processing Init ***************************************************/
   app_postprocess_init(&pp_params, &NN_Instance_Default);
@@ -210,6 +213,7 @@ int main(void)
 
   /* Start LCD Display camera pipe stream */
   CameraPipeline_DisplayPipe_Start(lcd_bg_buffer, CMW_MODE_CONTINUOUS);
+  printf("%s():%d\r\n", __func__, __LINE__);
 
   /*** App Loop ***************************************************************/
   while (1)
