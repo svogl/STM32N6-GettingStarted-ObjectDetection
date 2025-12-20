@@ -137,17 +137,30 @@ int erase_enc_output(void){
 */
 int venc_init(void)
 {
-  /* erase output*/
-//  TRACE_MAIN("erasing flash output blocks\n");
-//  erase_enc_output();
-//  TRACE_MAIN("Done erasing output flash blocks\n");
-//
-//#if USE_SD_AS_OUTPUT
-//  /* wait for erase operation to be done */
-//  while(BSP_SD_GetCardState(0) != SD_TRANSFER_OK);
-//#endif
   /* initialize VENC */
-  LL_VENC_Init();
+
+	__HAL_RCC_VENCRAM_MEM_CLK_ENABLE(); //p570; ok
+	__HAL_RCC_VENC_CLK_ENABLE();
+
+	// do not use this:
+	//	LL_VENC_Init();
+	// becasue syscfg registers are unavailbale...
+	// instead, copy out the rest of the function:
+
+
+  /* enable APB5 bus clock*/
+  /* cf. errata : SHOULD ADD REFERENCE TO THE ERRATA */
+  /* using CMSIS access because ll_bus does not contain APB5 enable macros*/
+  WRITE_REG(RCC->BUSENSR, RCC_BUSENSR_APB5ENS);
+
+  /* enable VENCRAM */
+  LL_MEM_EnableClock(LL_MEM_VENCRAM);
+
+  /* enable VENC clock */
+  LL_APB5_GRP1_EnableClock(LL_APB5_GRP1_PERIPH_VENC);
+
+
+  // and init the rest:
 
   /* initialize encoder software for camera feed encoding */
   encoder_prepare(800,480,output_buffer);
