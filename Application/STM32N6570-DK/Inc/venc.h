@@ -21,4 +21,7 @@ extern int encoder_end(void);
 extern int save_stream(uint32_t offset, uint32_t * buf, size_t size);
 extern int erase_enc_output(void);
 
+extern uint32_t img_addr;
+extern volatile uint8_t buf_index_changed;
+
 #endif

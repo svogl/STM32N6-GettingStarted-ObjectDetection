@@ -188,14 +188,6 @@ int main(void)
   // init & test sdcard:
   sdcard_init();
 
-  // init once, set up HAL & hardware
-  int ret = 1;// venc_init();
-  int vencAvailable = ret == 0;
-  if (ret != 0) {
-	  printf("VENC INIT FAILED WITH %d - skipping\n", ret);
-  }
-  printf("%s():%d\r\n", __func__, __LINE__);
-
   /*** NN Init ****************************************************************/
   uint32_t pitch_nn = 0;
   uint32_t nn_in_len = 0;
@@ -213,6 +205,15 @@ int main(void)
 
   LCD_init();
 
+  // init once, set up HAL & hardware
+  int ret = venc_init();
+  int vencAvailable = ret == 0;
+  if (!vencAvailable) {
+	  printf("VENC INIT FAILED WITH %d - skipping\n", ret);
+  }
+  printf("%s():%d\r\n", __func__, __LINE__);
+
+
   /* Start LCD Display camera pipe stream */
   CameraPipeline_DisplayPipe_Start(lcd_bg_buffer, CMW_MODE_CONTINUOUS);
   printf("%s():%d\r\n", __func__, __LINE__);
@@ -221,6 +222,13 @@ int main(void)
   while (1)
   {
     CameraPipeline_IspUpdate();
+
+    if (vencAvailable) {
+		img_addr = DCMIPP->P1STM0AR;
+		buf_index_changed = 1;
+		encode_frame();
+		printf("VENC ENCed\n", ret);
+    }
 
     if (pitch_nn != (NN_WIDTH * NN_BPP))
     {
@@ -237,24 +245,28 @@ int main(void)
     cameraFrameReceived = 0;
 
     uint32_t ts[2] = { 0 };
-
     if (pitch_nn != (NN_WIDTH * NN_BPP))
     {
+    	if (vencAvailable){
+    		encode_frame();
+    	}
+
       SCB_InvalidateDCache_by_Addr(dcmipp_out_nn, sizeof(dcmipp_out_nn));
     /*
      * Crop the image if the neural network (NN) input dimensions are not a multiple of 16.
      * The DCMIPP hardware requires the output image dimensions to be multiples of 16.
      * This ensures compatibility with the NN input dimensions.
      */
+#if 1
       img_crop(dcmipp_out_nn, nn_in, pitch_nn, NN_WIDTH, NN_HEIGHT, NN_BPP);
+#endif
       SCB_CleanInvalidateDCache_by_Addr(nn_in, nn_in_len);
     }
-
     ts[0] = HAL_GetTick();
     /* run ATON inference */
     Run_Inference();
     ts[1] = HAL_GetTick();
-
+#if 0
     int32_t ret = app_postprocess_run((void **) nn_out, number_output, &pp_output, &pp_params);
     assert(ret == 0);
 
@@ -265,6 +277,7 @@ int main(void)
       float32_t *tmp = nn_out[i];
       SCB_InvalidateDCache_by_Addr(tmp, nn_out_len[i]);
     }
+#endif
   }
 }
 
@@ -530,6 +543,7 @@ static void LCD_init(void)
   UTIL_LCD_SetTextColor(UTIL_LCD_COLOR_WHITE);
 }
 
+
 /**
  * @brief Displays a Welcome screen
  */
@@ -551,6 +565,17 @@ static void Display_WelcomeScreen(void)
     UTIL_LCDEx_PrintfAt(0, LINE(18), CENTER_MODE, WELCOME_MSG_2);
     UTIL_LCD_SetBackColor(0);
   }
+}
+
+
+
+void BSP_CAMERA_FrameEventCallback(uint32_t instance)
+{
+  /* swap buffers and signal new frame*/
+  img_addr = DCMIPP->P1STM0AR;
+  buf_index_changed = 1;
+  BSP_LCD_SetLayerAddress(0, 0, img_addr);
+  BSP_LCD_Reload(0, BSP_LCD_RELOAD_VERTICAL_BLANKING);
 }
 
 /**
