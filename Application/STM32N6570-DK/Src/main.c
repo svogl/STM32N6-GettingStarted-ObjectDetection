@@ -184,7 +184,9 @@ int main(void)
 #endif
 
   printf("%s():%d\r\n", __func__, __LINE__);
-//  sdcard_init();
+
+  // init & test sdcard:
+  sdcard_init();
 
   // init once, set up HAL & hardware
   int ret = 1;// venc_init();
