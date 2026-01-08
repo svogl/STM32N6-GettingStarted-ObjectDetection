@@ -133,6 +133,7 @@ C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/ff.c
 C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/ffsystem_cmsis_os.c
 C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/ff_gen_drv.c
 C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/ffsystem_template.c
+C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/ffunicode.c
 C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/drivers/sd/sd_diskio.c
 # C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/drivers/sd/sd_diskio_dma_rtos.c
 C_SOURCES += ../../Middlewares/ST/stm32-mw-fatfs/source/drivers/sd/sd_diskio_dma_standalone.c

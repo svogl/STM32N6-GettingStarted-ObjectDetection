@@ -497,6 +497,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/ST/stm32-mw-fatfs/source/ffsystem_baremetal.c</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/ST/stm32-mw-fatfs/source/ffunicode.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/ST/stm32-mw-fatfs/source/ffunicode.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/ST/stm32-mw-fatfs/source/drivers/sd/sd_diskio.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/ST/stm32-mw-fatfs/source/drivers/sd/sd_diskio.c</locationURI>
