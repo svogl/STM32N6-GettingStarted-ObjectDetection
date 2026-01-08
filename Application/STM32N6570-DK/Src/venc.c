@@ -35,7 +35,7 @@
 #define FRAMERATE 30
 /* number of frames to film and encode */
 #define VIDEO_FRAME_NB 10
-#define USE_SD_AS_OUTPUT 1
+#define USE_SD_AS_OUTPUT 0
 
 /* Private macro -------------------------------------------------------------*/
 
@@ -59,7 +59,12 @@ uint32_t img_addr = 0;
 
 EWLLinearMem_t outbuf;
 static int frame_nb = 0;
-uint32_t output_buffer[800*480/8] __NON_CACHEABLE __attribute__((aligned(8)));
+
+__attribute__ ((section (".psram_bss")))
+__attribute__ ((aligned (32)))
+uint32_t output_buffer[800*480/2];
+
+//extern uint32_t* output_buffer;
 
 #if USE_SD_AS_OUTPUT
 uint32_t sd_buf1[0x10000] __NON_CACHEABLE;
