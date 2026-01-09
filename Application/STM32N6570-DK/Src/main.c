@@ -25,7 +25,7 @@
 #include "stm32_lcd_ex.h"
 #include "app_postprocess.h"
 #include "ll_aton_rt_user_api.h"
-LL_ATON_DECLARE_NAMED_NN_INSTANCE_AND_INTERFACE(Default);
+LL_ATON_DECLARE_NAMED_NN_INSTANCE_AND_INTERFACE(network);
 #include "app_camerapipeline.h"
 #include "main.h"
 #include "sdcard.h"
@@ -36,6 +36,9 @@ LL_ATON_DECLARE_NAMED_NN_INSTANCE_AND_INTERFACE(Default);
 #include "stlogo.h"
 
 CLASSES_TABLE;
+
+// neural network name
+#define NN_INST NN_Instance_network
 
 #define MAX_NUMBER_OUTPUT 5
 #define LCD_FG_WIDTH  SCREEN_WIDTH
@@ -151,7 +154,6 @@ static void Hardware_init(void);
 static void Run_Inference(void);
 static void NeuralNetwork_init(uint32_t *nnin_length, float32_t *nn_out[], int *number_output, int32_t nn_out_len[]);
 
-
 /**
   * @brief  Main program
   * @param  None
@@ -198,7 +200,7 @@ int main(void)
   printf("%s():%d\r\n", __func__, __LINE__);
 
   /*** Post Processing Init ***************************************************/
-  app_postprocess_init(&pp_params, &NN_Instance_Default);
+  app_postprocess_init(&pp_params, &NN_INST);
 
   /*** Camera Init ************************************************************/
   CameraPipeline_Init(&lcd_bg_area.XSize, &lcd_bg_area.YSize, &pitch_nn);
@@ -206,7 +208,7 @@ int main(void)
   LCD_init();
 
   // init once, set up HAL & hardware
-  int ret = venc_init();
+  int ret = 1;//venc_init();
   int vencAvailable = ret == 0;
   if (!vencAvailable) {
 	  printf("VENC INIT FAILED WITH %d - skipping\n", ret);
@@ -219,8 +221,10 @@ int main(void)
   printf("%s():%d\r\n", __func__, __LINE__);
 
   /*** App Loop ***************************************************************/
+  int counter=0;
   while (1)
   {
+	  counter++;
     CameraPipeline_IspUpdate();
 
     if (vencAvailable) {
@@ -257,16 +261,19 @@ int main(void)
      * The DCMIPP hardware requires the output image dimensions to be multiples of 16.
      * This ensures compatibility with the NN input dimensions.
      */
-#if 1
       img_crop(dcmipp_out_nn, nn_in, pitch_nn, NN_WIDTH, NN_HEIGHT, NN_BPP);
-#endif
+
       SCB_CleanInvalidateDCache_by_Addr(nn_in, nn_in_len);
     }
+	printf("iter pre %d \r\n", counter);
     ts[0] = HAL_GetTick();
     /* run ATON inference */
     Run_Inference();
     ts[1] = HAL_GetTick();
-#if 0
+
+	printf("iter %d %u\r\n", counter, ts[1] - ts[0]);
+
+#if 1
     int32_t ret = app_postprocess_run((void **) nn_out, number_output, &pp_output, &pp_params);
     assert(ret == 0);
 
@@ -332,7 +339,7 @@ static void Run_Inference(void) {
 
   do
   {
-    ll_aton_rt_ret = LL_ATON_RT_RunEpochBlock(&NN_Instance_Default);
+    ll_aton_rt_ret = LL_ATON_RT_RunEpochBlock(&NN_INST);
 
     /* Wait for next event */
     if (ll_aton_rt_ret == LL_ATON_RT_WFE)
@@ -341,13 +348,13 @@ static void Run_Inference(void) {
     }
   } while (ll_aton_rt_ret != LL_ATON_RT_DONE);
 
-  LL_ATON_RT_Reset_Network(&NN_Instance_Default);
+  LL_ATON_RT_Reset_Network(&NN_INST);
 }
 
 static void NeuralNetwork_init(uint32_t *nnin_length, float32_t *nn_out[], int *number_output, int32_t nn_out_len[])
 {
-  const LL_Buffer_InfoTypeDef *nn_in_info = LL_ATON_Input_Buffers_Info(&NN_Instance_Default);
-  const LL_Buffer_InfoTypeDef *nn_out_info = LL_ATON_Output_Buffers_Info(&NN_Instance_Default);
+  const LL_Buffer_InfoTypeDef *nn_in_info = LL_ATON_Input_Buffers_Info(&NN_INST);
+  const LL_Buffer_InfoTypeDef *nn_out_info = LL_ATON_Output_Buffers_Info(&NN_INST);
 
   // Get the input buffer address
   nn_in = (uint8_t *) LL_Buffer_addr_start(&nn_in_info[0]);
@@ -369,7 +376,7 @@ static void NeuralNetwork_init(uint32_t *nnin_length, float32_t *nn_out[], int *
   *nnin_length = LL_Buffer_len(&nn_in_info[0]);
 
   LL_ATON_RT_RuntimeInit();
-  LL_ATON_RT_Init_Network(&NN_Instance_Default);
+  LL_ATON_RT_Init_Network(&NN_INST);
 }
 
 static void NPURam_enable(void)
@@ -424,7 +431,7 @@ static void set_clk_sleep_mode(void)
 static void NPUCache_config(void)
 {
 
-  npu_cache_init();
+//  npu_cache_init();
   npu_cache_enable();
 }
 
@@ -729,8 +736,7 @@ static void SystemClock_Config(void)
 
 }
 
-
-void HAL_CACHEAXI_MspInit(CACHEAXI_HandleTypeDef *hcacheaxi)
+void npu_cache_enable_clocks_and_reset()
 {
   __HAL_RCC_CACHEAXIRAM_MEM_CLK_ENABLE();
   __HAL_RCC_CACHEAXI_CLK_ENABLE();
@@ -738,7 +744,7 @@ void HAL_CACHEAXI_MspInit(CACHEAXI_HandleTypeDef *hcacheaxi)
   __HAL_RCC_CACHEAXI_RELEASE_RESET();
 }
 
-void HAL_CACHEAXI_MspDeInit(CACHEAXI_HandleTypeDef *hcacheaxi)
+void npu_cache_disable_clocks_and_reset()
 {
   __HAL_RCC_CACHEAXIRAM_MEM_CLK_DISABLE();
   __HAL_RCC_CACHEAXI_CLK_DISABLE();

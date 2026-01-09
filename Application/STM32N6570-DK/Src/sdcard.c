@@ -20,7 +20,7 @@ const int size=1024;
 const int count=1024; //->1Mb
 
 // put in psram; remove first attribute to have this in internal RAM.
-__attribute__ ((section (".psram_bss")))
+//__attribute__ ((section (".psram_bss")))
 __attribute__ ((aligned (32)))
 unsigned short speed_test_buffer[1024];
 

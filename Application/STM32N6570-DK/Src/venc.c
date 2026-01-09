@@ -255,7 +255,8 @@ int encode_frame(){
     TRACE_MAIN("Error : NULL image address");
     return -1;
   }
-  if (!frame_nb)
+  // intra-code every 8th frame
+  if (! (frame_nb& 0x07) )
   {
     /* if frame is the first : set as intra coded */
     encIn.timeIncrement = 0;
