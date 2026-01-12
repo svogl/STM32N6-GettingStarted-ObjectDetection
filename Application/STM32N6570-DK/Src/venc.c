@@ -55,14 +55,19 @@ H264EncOut encOut= {0};
 H264EncInst encoder= {0};
 H264EncConfig cfg= {0};
 uint32_t output_size = 0;
-uint32_t img_addr = 0;
+//uint32_t img_addr = 0;
 
 EWLLinearMem_t outbuf;
 static int frame_nb = 0;
 
 __attribute__ ((section (".psram_bss")))
 __attribute__ ((aligned (32)))
-uint32_t output_buffer[800*480/2];
+uint32_t vin_buffer[800*480];
+
+__attribute__ ((section (".psram_bss")))
+__attribute__ ((aligned (32)))
+uint32_t output_buffer[800*480*2];
+
 
 //extern uint32_t* output_buffer;
 
@@ -106,6 +111,7 @@ int save_stream(uint32_t offset, uint32_t * buf, size_t size){
     }
   }
 #endif
+  printf("save %d\r\n", size);
   return err;
 }
 
@@ -166,10 +172,12 @@ int venc_init(void)
 
 
   // and init the rest:
+  TRACE_MAIN("-------- ENC INIT PREP\r\n");
 
   /* initialize encoder software for camera feed encoding */
-  encoder_prepare(800,480,output_buffer);
+  encoder_prepare(640,480,output_buffer);
 
+  TRACE_MAIN("-------- ENC INIT DONE!\r\n");
   return 0;
 }
 
@@ -227,7 +235,7 @@ int encoder_prepare(uint32_t width, uint32_t height, uint32_t * output_buffer)
   /*assign buffers to input structure */
   encIn.pOutBuf = output_buffer;
   encIn.busOutBuf = (uint32_t) output_buffer;
-  encIn.outBufSize = width * height/2;
+  encIn.outBufSize = width * height;
 
   /* create stream */
   ret = H264EncStrmStart(encoder, &encIn, &encOut);
@@ -249,13 +257,17 @@ int encoder_prepare(uint32_t width, uint32_t height, uint32_t * output_buffer)
 }
 
 
-int encode_frame(){
+int encode_frame(void* img_addr){
+  TRACE_MAIN("-------- ENC START!\n");
+
+
   int ret = H264ENC_FRAME_READY;
   if(!img_addr){
     TRACE_MAIN("Error : NULL image address");
     return -1;
   }
-  if (!frame_nb)
+  // every xth frame Intra
+  if (! (frame_nb & 0x07))
   {
     /* if frame is the first : set as intra coded */
     encIn.timeIncrement = 0;

@@ -10,7 +10,7 @@ extern int venc_init(void);
 extern int encoder_prepare(uint32_t width, uint32_t height, uint32_t * output_buffer);
 
 // encode one frame
-extern int encode_frame(void);
+extern int encode_frame(void* img_addr);
 
 // finish outputing mp4 data.
 extern int encoder_end(void);
@@ -21,7 +21,9 @@ extern int encoder_end(void);
 extern int save_stream(uint32_t offset, uint32_t * buf, size_t size);
 extern int erase_enc_output(void);
 
-extern uint32_t img_addr;
+extern uint32_t vin_buffer[800*480];
+
+//extern uint32_t img_addr;
 extern volatile uint8_t buf_index_changed;
 
 #endif

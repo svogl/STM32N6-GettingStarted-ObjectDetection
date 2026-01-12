@@ -51,6 +51,9 @@ CLASSES_TABLE;
 #endif /* USE_COM_LOG || defined(TERMINAL_IO) */
 
 
+unsigned fc=0;
+
+
 typedef struct
 {
   uint32_t X0;
@@ -125,17 +128,18 @@ od_pp_out_t pp_output;
 __attribute__ ((aligned (32)))
 uint8_t dcmipp_out_nn[DCMIPP_OUT_NN_BUFF_LEN];
 #else
-uint8_t *dcmipp_out_nn;
+uint8_t *dcmipp_out_nn = NULL;
 #endif
 
 /* Lcd Background Buffer */
 __attribute__ ((section (".psram_bss")))
 __attribute__ ((aligned (32)))
 uint8_t lcd_bg_buffer[800 * 480 * 2];
+
 /* Lcd Foreground Buffer */
 __attribute__ ((section (".psram_bss")))
 __attribute__ ((aligned (32)))
-uint8_t lcd_fg_buffer[2][LCD_FG_WIDTH * LCD_FG_HEIGHT * 2];
+uint8_t lcd_fg_buffer[2][LCD_FG_WIDTH * LCD_FG_HEIGHT * 4];
 static int lcd_fg_buffer_rd_idx;
 
 static void SystemClock_Config(void);
@@ -150,6 +154,9 @@ static void Display_WelcomeScreen(void);
 static void Hardware_init(void);
 static void Run_Inference(void);
 static void NeuralNetwork_init(uint32_t *nnin_length, float32_t *nn_out[], int *number_output, int32_t nn_out_len[]);
+
+// playground
+static void Display_Output(od_pp_out_t *p_postprocess, uint32_t inference_ms);
 
 
 /**
@@ -186,7 +193,7 @@ int main(void)
   printf("%s():%d\r\n", __func__, __LINE__);
 
   // init & test sdcard:
-  sdcard_init();
+//  sdcard_init();
 
   /*** NN Init ****************************************************************/
   uint32_t pitch_nn = 0;
@@ -202,6 +209,7 @@ int main(void)
 
   /*** Camera Init ************************************************************/
   CameraPipeline_Init(&lcd_bg_area.XSize, &lcd_bg_area.YSize, &pitch_nn);
+  printf("%s():%d  .. pitch is %u\r\n", __func__, __LINE__, pitch_nn);
 
   LCD_init();
 
@@ -216,19 +224,18 @@ int main(void)
 
   /* Start LCD Display camera pipe stream */
   CameraPipeline_DisplayPipe_Start(lcd_bg_buffer, CMW_MODE_CONTINUOUS);
-  printf("%s():%d\r\n", __func__, __LINE__);
+  printf("%s():%d  .. pitch is %u\r\n", __func__, __LINE__, pitch_nn);
+
+  BSP_LED_On(LED1);
+  BSP_LED_On(LED2);
 
   /*** App Loop ***************************************************************/
   while (1)
   {
+	  printf("%s():%d  .. pitch is %u nn %d\r\n", __func__, __LINE__, pitch_nn, (NN_WIDTH * NN_BPP));
     CameraPipeline_IspUpdate();
 
-    if (vencAvailable) {
-		img_addr = DCMIPP->P1STM0AR;
-		buf_index_changed = 1;
-		encode_frame();
-		printf("VENC ENCed\n", ret);
-    }
+    pitch_nn = 1440;
 
     if (pitch_nn != (NN_WIDTH * NN_BPP))
     {
@@ -244,29 +251,35 @@ int main(void)
     while (cameraFrameReceived == 0) {};
     cameraFrameReceived = 0;
 
+
     uint32_t ts[2] = { 0 };
     if (pitch_nn != (NN_WIDTH * NN_BPP))
     {
-    	if (vencAvailable){
-    		encode_frame();
-    	}
-
       SCB_InvalidateDCache_by_Addr(dcmipp_out_nn, sizeof(dcmipp_out_nn));
     /*
      * Crop the image if the neural network (NN) input dimensions are not a multiple of 16.
      * The DCMIPP hardware requires the output image dimensions to be multiples of 16.
      * This ensures compatibility with the NN input dimensions.
      */
-#if 1
       img_crop(dcmipp_out_nn, nn_in, pitch_nn, NN_WIDTH, NN_HEIGHT, NN_BPP);
-#endif
       SCB_CleanInvalidateDCache_by_Addr(nn_in, nn_in_len);
     }
+
+    memcpy(vin_buffer, nn_in, sizeof(vin_buffer));
+
+    if (vencAvailable) {
+		printf("VENC ENC %d   %d\n", fc, cameraFrameReceived);
+		buf_index_changed = 1;
+		encode_frame(vin_buffer);
+		printf("VENC ENCed\n");
+		printf("%s():%d  .. pitch is %lu nn %d\r\n", __func__, __LINE__, pitch_nn, (NN_WIDTH * NN_BPP));
+    }
+#if 0
     ts[0] = HAL_GetTick();
     /* run ATON inference */
     Run_Inference();
     ts[1] = HAL_GetTick();
-#if 0
+
     int32_t ret = app_postprocess_run((void **) nn_out, number_output, &pp_output, &pp_params);
     assert(ret == 0);
 
@@ -277,6 +290,8 @@ int main(void)
       float32_t *tmp = nn_out[i];
       SCB_InvalidateDCache_by_Addr(tmp, nn_out_len[i]);
     }
+#else
+    Display_Output(&pp_output, ts[1] - ts[0]);
 #endif
   }
 }
@@ -514,6 +529,26 @@ static void Display_NetworkOutput(od_pp_out_t *p_postprocess, uint32_t inference
   lcd_fg_buffer_rd_idx = 1 - lcd_fg_buffer_rd_idx;
 }
 
+static void Display_Output(od_pp_out_t *p_postprocess, uint32_t inference_ms)
+{
+//  od_pp_outBuffer_t *rois = p_postprocess->pOutBuff;
+//  uint32_t nb_rois = p_postprocess->nb_detect;
+  int ret;
+
+  ret = HAL_LTDC_SetAddress_NoReload(&hlcd_ltdc, (uint32_t) lcd_fg_buffer[lcd_fg_buffer_rd_idx], LTDC_LAYER_2);
+  assert(ret == HAL_OK);
+
+  UTIL_LCD_FillRect(lcd_fg_area.X0, lcd_fg_area.Y0, lcd_fg_area.XSize, lcd_fg_area.YSize, 0x00000000); /* Clear previous boxes */
+  UTIL_LCD_SetBackColor(0x40000000);
+  UTIL_LCDEx_PrintfAt(0, LINE(3), CENTER_MODE, "fc %u %u", fc++, cameraFrameReceived);
+  UTIL_LCD_SetBackColor(0);
+
+  SCB_CleanDCache_by_Addr(lcd_fg_buffer[lcd_fg_buffer_rd_idx], LCD_FG_FRAMEBUFFER_SIZE);
+  ret = HAL_LTDC_ReloadLayer(&hlcd_ltdc, LTDC_RELOAD_VERTICAL_BLANKING, LTDC_LAYER_2);
+  assert(ret == HAL_OK);
+  lcd_fg_buffer_rd_idx = 1 - lcd_fg_buffer_rd_idx;
+}
+
 static void LCD_init(void)
 {
   BSP_LCD_Init(0, LCD_ORIENTATION_LANDSCAPE);
@@ -572,10 +607,11 @@ static void Display_WelcomeScreen(void)
 void BSP_CAMERA_FrameEventCallback(uint32_t instance)
 {
   /* swap buffers and signal new frame*/
-  img_addr = DCMIPP->P1STM0AR;
   buf_index_changed = 1;
-  BSP_LCD_SetLayerAddress(0, 0, img_addr);
+  BSP_LCD_SetLayerAddress(0, 0, DCMIPP->P1STM0AR);
   BSP_LCD_Reload(0, BSP_LCD_RELOAD_VERTICAL_BLANKING);
+
+  printf(".%d\r\n",fc);
 }
 
 /**
