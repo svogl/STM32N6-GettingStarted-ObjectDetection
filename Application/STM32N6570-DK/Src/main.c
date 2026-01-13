@@ -319,16 +319,17 @@ int main(void)
 		if (vidStarted == 1) { // capture running
 			// keep data in it's own buffer to avoid artefacts (for now)
 		    memcpy(vin_buffer, lcd_bg_buffer, sizeof(lcd_bg_buffer));
-			printf("VENC ENC %d\r\n", fc);
+
+		    printf("VENC ENC %d\r\n", fc);
 			buf_index_changed = 1;
 			encode_frame(vin_buffer);
 			printf("VENC ENCed\r\n");
-		}
 
-		if (fc == 100) { // time to say goodbye.
-			encoder_end();
-			closeFile();
-			vidStarted++;
+			if (fc == 100) { // time to say goodbye.
+				encoder_end();
+				closeFile();
+				vidStarted++;
+			}
 		}
     }
 #if 0
