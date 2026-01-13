@@ -17,9 +17,8 @@
 #include "ewl.h"
 #include "h264encapi.h"
 #include "stm32n6xx_hal.h"
-#include "stm32n6xx_ll_venc.h"
-#include "stm32n6570_discovery.h"
-#include "stm32n6570_discovery_sd.h"
+
+#include "app_config.h"
 
 /** @addtogroup Templates
 * @{
@@ -66,7 +65,7 @@ uint32_t vin_buffer[800*480];
 
 __attribute__ ((section (".psram_bss")))
 __attribute__ ((aligned (32)))
-uint32_t output_buffer[800*480*2];
+uint32_t output_buffer[800*480];
 
 
 //extern uint32_t* output_buffer;
@@ -93,7 +92,7 @@ size_t SD_index = 0;
 * @param  size  size (in bytes) of the buffer to save
 * @retval err error code. 0 On success.
 */
-int save_stream(uint32_t offset, uint32_t * buf, size_t size){
+int save_stream_(uint32_t offset, uint32_t * buf, size_t size){
   int err = 0;
 #if USE_SD_AS_OUTPUT
   for(int i = 0; i<size/4; i++){
@@ -113,31 +112,6 @@ int save_stream(uint32_t offset, uint32_t * buf, size_t size){
 #endif
   printf("save %d\r\n", size);
   return err;
-}
-
-int flush_out_buffer(void){
-#if USE_SD_AS_OUTPUT
-  if(BSP_SD_WriteBlocks(0, (uint32_t *) curr_buf, SD_index, 512)!= BSP_ERROR_NONE){
-        return -1;
-      }
-#endif
-  return 0;
-}
-/**
-* @brief  erases data in output medium
-* @retval err error code. 0 On success.
-*/
-int erase_enc_output(void){
-  /* flash must be erased by blocks of 64 bytes */
-#if USE_SD_AS_OUTPUT
-  /* only 100 blocks are erased because erasing the 64M would take forever */
-  if (BSP_SD_Erase(0, 0, 1943552) != BSP_ERROR_NONE)
-  {
-    TRACE_MAIN("failed to erase external flash block nb \n");
-    return -1;
-  }
-#endif
-  return 0;
 }
 
 
@@ -170,14 +144,13 @@ int venc_init(void)
   /* enable VENC clock */
   LL_APB5_GRP1_EnableClock(LL_APB5_GRP1_PERIPH_VENC);
 
-
   // and init the rest:
   TRACE_MAIN("-------- ENC INIT PREP\r\n");
 
   /* initialize encoder software for camera feed encoding */
-  encoder_prepare(640,480,output_buffer);
+//  encoder_prepare(800,480,output_buffer);
 
-  TRACE_MAIN("-------- ENC INIT DONE!\r\n");
+  TRACE_MAIN("-------- ENC INIT DONE! vin %08x out %08x\r\n", vin_buffer, output_buffer);
   return 0;
 }
 
@@ -225,7 +198,7 @@ int encoder_prepare(uint32_t width, uint32_t height, uint32_t * output_buffer)
     TRACE_MAIN("error getting preproc data\n");
     return -1;
   }
-  preproc_cfg.inputType = H264ENC_RGB565;
+  preproc_cfg.inputType = VENC_PREPROC_FMT; // orig: H264ENC_RGB565;
   ret = H264EncSetPreProcessing(encoder, &preproc_cfg);
   if(ret != H264ENC_OK){
     TRACE_MAIN("error setting preproc data\n");
@@ -249,7 +222,7 @@ int encoder_prepare(uint32_t width, uint32_t height, uint32_t * output_buffer)
   if (save_stream(output_size, encIn.pOutBuf,  encOut.streamSize))
   {
     TRACE_MAIN("error saving stream\n");
-    return -1;
+//    return -1;
   }
   TRACE_MAIN("stream started. saved %d bytes\n", encOut.streamSize);
   output_size+= encOut.streamSize;

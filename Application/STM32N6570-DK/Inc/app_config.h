@@ -71,4 +71,20 @@ static const float32_t AI_OD_ST_YOLOX_PP_S_ANCHORS[2*AI_OD_ST_YOLOX_PP_NB_ANCHOR
 #define WELCOME_MSG_1         "st_yolo_x_nano_480_1.0_0.25_3_st_int8.tflite"
 #define WELCOME_MSG_2         "Model Running in STM32 MCU internal memory"
 
+/* image formats to use: */
+#define IMG_FMT_ORIG 1
+#define IMG_FMT_YUV  2
+#define IMG_FMT IMG_FMT_ORIG
+
+
+#if IMG_FMT == IMG_FMT_ORIG
+#define VENC_PREPROC_FMT H264ENC_RGB565
+#define DCMIPP_PIPE1_OUT_FMT DCMIPP_PIXEL_PACKER_FORMAT_RGB565_1
+#endif
+
+#if IMG_FMT == IMG_FMT_YUV
+#define VENC_PREPROC_FMT H264ENC_YUV422_INTERLEAVED_YUYV
+#define DCMIPP_PIPE1_OUT_FMT DCMIPP_PIXEL_PACKER_FORMAT_YUV422_1
+#endif
+
 #endif

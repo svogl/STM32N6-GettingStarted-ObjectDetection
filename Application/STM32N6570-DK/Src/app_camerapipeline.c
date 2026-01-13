@@ -72,7 +72,8 @@ static void DCMIPP_PipeInitDisplay(CMW_CameraInit_t *camConf, uint32_t *bg_width
 
   dcmipp_conf.output_width = lcd_bg_width;
   dcmipp_conf.output_height = lcd_bg_height;
-  dcmipp_conf.output_format = DCMIPP_PIXEL_PACKER_FORMAT_RGB565_1;
+//  dcmipp_conf.output_format = DCMIPP_PIXEL_PACKER_FORMAT_RGB565_1;
+  dcmipp_conf.output_format = DCMIPP_PIPE1_OUT_FMT;
   dcmipp_conf.output_bpp = 2;
   dcmipp_conf.mode = aspect_ratio;
   dcmipp_conf.enable_gamma_conversion = GAMMA_CONVERSION;
@@ -181,8 +182,12 @@ int CMW_CAMERA_PIPE_FrameEventCallback(uint32_t pipe)
 {
   switch (pipe)
   {
+	case DCMIPP_PIPE1:
+		printf("*");
+	  break;
     case DCMIPP_PIPE2 :
       cameraFrameReceived++;
+		printf("~");
       break;
   }
   return 0;

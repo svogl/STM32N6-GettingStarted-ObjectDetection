@@ -33,7 +33,9 @@ LL_ATON_DECLARE_NAMED_NN_INSTANCE_AND_INTERFACE(Default);
 #include <stdio.h>
 #include "app_config.h"
 #include "crop_img.h"
-#include "stlogo.h"
+//#include "stlogo.h"
+
+#include "ff.h"
 
 CLASSES_TABLE;
 
@@ -52,7 +54,6 @@ CLASSES_TABLE;
 
 
 unsigned fc=0;
-
 
 typedef struct
 {
@@ -156,7 +157,41 @@ static void Run_Inference(void);
 static void NeuralNetwork_init(uint32_t *nnin_length, float32_t *nn_out[], int *number_output, int32_t nn_out_len[]);
 
 // playground
+
+// show preview w/o NN
 static void Display_Output(od_pp_out_t *p_postprocess, uint32_t inference_ms);
+
+
+// file saving code:
+int fileCounter=1234;
+FIL vid;
+int nextFileId() {
+	// todo: count # files in directory&set
+	fileCounter++;
+	return fileCounter;
+}
+
+int openFile(int id) {
+	char name[40];
+	sprintf(name, "test-%d.mp4",id);
+	int res = f_open(&vid, name, FA_WRITE | FA_CREATE_ALWAYS);
+	return res;
+}
+int closeFile() {
+	f_close(&vid);
+}
+
+// save function as called from the venc block
+int save_stream(uint32_t offset, uint32_t * buf, size_t size)
+{
+	size_t written;
+    int res = f_write(&vid, buf, size, &written);
+    if (res)
+    	return res;
+    printf("wrote %d\r\n", written);
+    return (written == size) ? 0 : FR_INT_ERR;
+}
+
 
 
 /**
@@ -193,7 +228,7 @@ int main(void)
   printf("%s():%d\r\n", __func__, __LINE__);
 
   // init & test sdcard:
-//  sdcard_init();
+  sdcard_init();
 
   /*** NN Init ****************************************************************/
   uint32_t pitch_nn = 0;
@@ -208,8 +243,12 @@ int main(void)
   app_postprocess_init(&pp_params, &NN_Instance_Default);
 
   /*** Camera Init ************************************************************/
+
   CameraPipeline_Init(&lcd_bg_area.XSize, &lcd_bg_area.YSize, &pitch_nn);
-  printf("%s():%d  .. pitch is %u\r\n", __func__, __LINE__, pitch_nn);
+  printf("%s():%d  .. bg w %d h %d pitch is %u\r\n", __func__, __LINE__,
+		  lcd_bg_area.XSize, lcd_bg_area.YSize, pitch_nn);
+  printf("%s():%d  .. fg w %d h %d pitch is %u\r\n", __func__, __LINE__,
+		  lcd_fg_area.XSize, lcd_fg_area.YSize, pitch_nn);
 
   LCD_init();
 
@@ -229,10 +268,12 @@ int main(void)
   BSP_LED_On(LED1);
   BSP_LED_On(LED2);
 
+  int vidStarted = 0;
+
   /*** App Loop ***************************************************************/
   while (1)
   {
-	  printf("%s():%d  .. pitch is %u nn %d\r\n", __func__, __LINE__, pitch_nn, (NN_WIDTH * NN_BPP));
+//	  printf("%s():%d  .. pitch is %u nn %d\r\n", __func__, __LINE__, pitch_nn, (NN_WIDTH * NN_BPP));
     CameraPipeline_IspUpdate();
 
     pitch_nn = 1440;
@@ -252,6 +293,8 @@ int main(void)
     cameraFrameReceived = 0;
 
 
+//	  printf("%s():%d  .. pitch is %u nn %d   ptr %08x  %08x\r\n", __func__, __LINE__, pitch_nn, (NN_WIDTH * NN_BPP), vin_buffer, output_buffer);
+	    pitch_nn = 1440;
     uint32_t ts[2] = { 0 };
     if (pitch_nn != (NN_WIDTH * NN_BPP))
     {
@@ -265,14 +308,28 @@ int main(void)
       SCB_CleanInvalidateDCache_by_Addr(nn_in, nn_in_len);
     }
 
-    memcpy(vin_buffer, nn_in, sizeof(vin_buffer));
 
     if (vencAvailable) {
-		printf("VENC ENC %d   %d\n", fc, cameraFrameReceived);
-		buf_index_changed = 1;
-		encode_frame(vin_buffer);
-		printf("VENC ENCed\n");
-		printf("%s():%d  .. pitch is %lu nn %d\r\n", __func__, __LINE__, pitch_nn, (NN_WIDTH * NN_BPP));
+    	if (!vidStarted) { // we're in idle, let's go.
+    		openFile(nextFileId());
+			encoder_prepare(800,480,output_buffer);
+    		vidStarted = 1;
+    	}
+
+		if (vidStarted == 1) { // capture running
+			// keep data in it's own buffer to avoid artefacts (for now)
+		    memcpy(vin_buffer, lcd_bg_buffer, sizeof(lcd_bg_buffer));
+			printf("VENC ENC %d\r\n", fc);
+			buf_index_changed = 1;
+			encode_frame(vin_buffer);
+			printf("VENC ENCed\r\n");
+		}
+
+		if (fc == 100) { // time to say goodbye.
+			encoder_end();
+			closeFile();
+			vidStarted++;
+		}
     }
 #if 0
     ts[0] = HAL_GetTick();
@@ -591,7 +648,7 @@ static void Display_WelcomeScreen(void)
   if (HAL_GetTick() - t0 < 4000)
   {
     /* Draw logo */
-    UTIL_LCD_FillRGBRect(300, 100, (uint8_t *) stlogo, 200, 107);
+//    UTIL_LCD_FillRGBRect(300, 100, (uint8_t *) stlogo, 200, 107);
 
     /* Display welcome message */
     UTIL_LCD_SetBackColor(0x40000000);

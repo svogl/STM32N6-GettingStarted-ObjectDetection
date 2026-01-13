@@ -12,7 +12,7 @@
 #include "sd_diskio.h" /* sd driver */
 #include "stm32n6570_discovery_sd.h"
 
-#define SPEED_TEST 1
+#define SPEED_TEST 0
 
 #if SPEED_TEST
 
@@ -78,7 +78,7 @@ int sdcard_init() {
     /* ---------------------------------------------------------------------*/
 
     UINT written;
-#ifdef SPEED_TEST
+#if SPEED_TEST
     {
     	// header struct borrowed from cf. https://gist.github.com/Jon-Schneider/8b7c53d27a7a13346a643dac9c19d34f
     	typedef struct wav_header {
@@ -165,7 +165,6 @@ int sdcard_init() {
 #endif
 
     f_close(&file);
-
 
 	return 0;
 }
