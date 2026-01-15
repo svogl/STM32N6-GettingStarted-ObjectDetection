@@ -34,10 +34,6 @@
 /* Model Related Info */
 #define POSTPROCESS_TYPE    POSTPROCESS_OD_ST_YOLOX_UI
 
-#define NN_WIDTH      (480)
-#define NN_HEIGHT     (480)
-#define NN_BPP 3
-
 #define COLOR_BGR (0)
 #define COLOR_RGB (1)
 #define COLOR_MODE    COLOR_RGB
