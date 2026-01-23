@@ -72,9 +72,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/ai-postprocessing-wrapper/app_postprocess_mpe_yolo_v8_ui.c</locationURI>
 		</link>
 		<link>
-			<name>Application/app_postprocess_od_st_ssd_uf.c</name>
+			<name>Application/app_postprocess_od_ssd_ui.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/ai-postprocessing-wrapper/app_postprocess_od_st_ssd_uf.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/ai-postprocessing-wrapper/app_postprocess_od_ssd_ui.c</locationURI>
+		</link>
+		<link>
+			<name>Application/app_postprocess_od_yolo_d_ui.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/ai-postprocessing-wrapper/app_postprocess_od_yolo_d_ui.c</locationURI>
 		</link>
 		<link>
 			<name>Application/app_postprocess_od_st_yolox_ui.c</name>
@@ -177,9 +182,14 @@
 			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/stm32-vision-models-postprocessing/lib_vision_models_pp/Src/od_pp_st_yolox.c</locationURI>
 		</link>
 		<link>
-			<name>stm32-vision-models-postprocessing/od_pp_ssd_st.c</name>
+			<name>stm32-vision-models-postprocessing/od_pp_ssd.c</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/stm32-vision-models-postprocessing/lib_vision_models_pp/Src/od_pp_ssd_st.c</locationURI>
+			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/stm32-vision-models-postprocessing/lib_vision_models_pp/Src/od_pp_ssd.c</locationURI>
+		</link>
+		<link>
+			<name>stm32-vision-models-postprocessing/od_pp_yolo_d.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/Middlewares/stm32-vision-models-postprocessing/lib_vision_models_pp/Src/od_pp_yolo_d.c</locationURI>
 		</link>
 		<link>
 			<name>stm32-vision-models-postprocessing/od_pp_yolov8.c</name>

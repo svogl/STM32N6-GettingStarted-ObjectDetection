@@ -22,10 +22,10 @@ This application is prebuilt with an object detection model.
 | Name                                        | Version             | Release notes
 |-----                                        | -------             | -------------
 | STM32Cube.AI runtime                        |  v11.0.0            |
-| ai-postprocessing-wrapper                   |  v1.0.9             | [release notes](Middlewares/ai-postprocessing-wrapper/Release_Notes.md)
+| ai-postprocessing-wrapper                   |  v1.0.10            | [release notes](Middlewares/ai-postprocessing-wrapper/Release_Notes.md)
 | screenl                                     |  v3.0.0             | [release notes](Middlewares/screenl/Release_Notes.md)
 | Camera Middleware                           |  v1.5.0             | [release notes](Middlewares/stm32-mw-camera/Release_Notes.md)
-| stm32-vision-models-postprocessing Library  |  v0.13.0            | [release notes](Middlewares/stm32-vision-models-postprocessing/lib_vision_models_pp/README.md)
+| stm32-vision-models-postprocessing Library  |  v0.14.2            | [release notes](Middlewares/stm32-vision-models-postprocessing/lib_vision_models_pp/README.md)
 | CMSIS                                       |  v6.2.0             | [release notes](STM32Cube_FW_N6/Drivers/CMSIS/st_readme.txt)
 | STM32N6xx CMSIS Device                      |  v1.3.0             | [release notes](STM32Cube_FW_N6/Drivers/CMSIS/Device/ST/STM32N6xx/Release_Notes.html)
 | STM32N6xx HAL/LL Drivers                    |  v1.3.0             | [release notes](STM32Cube_FW_N6/Drivers/STM32N6xx_HAL_Driver/Release_Notes.html)
@@ -50,6 +50,12 @@ This application is prebuilt with an object detection model.
 - Doc/Program-Hex-Files-STM32CubeProgrammer.md
 
 ## Update history
+
+### v2.2.1 / January 2026
+
+- Add Yolo-D and new SSD models support
+- Update lib_vision_models_pp to v0.14.2
+- Update ai-postprocessing-wrapper to v1.0.10
 
 ### v2.2.0 / January 2026
 

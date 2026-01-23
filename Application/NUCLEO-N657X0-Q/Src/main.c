@@ -109,10 +109,12 @@ const uint32_t colors[NUMBER_COLORS] = {
   od_yolov8_pp_static_param_t pp_params;
 #elif POSTPROCESS_TYPE == POSTPROCESS_OD_ST_YOLOX_UI
   od_st_yolox_pp_static_param_t pp_params;
-#elif POSTPROCESS_TYPE == POSTPROCESS_OD_ST_SSD_UF
-  od_ssd_st_pp_static_param_t pp_params;
-#elif POSTPROCESS_TYPE == POSTPROCESS_OD_FD_BLAZEFACE_UI
-  od_fd_blazeface_pp_static_param_t pp_params;
+#elif POSTPROCESS_TYPE == POSTPROCESS_OD_SSD_UI
+  od_ssd_pp_static_param_t pp_params;
+#elif POSTPROCESS_TYPE == POSTPROCESS_OD_ST_YOLOD_UI
+  od_yolo_d_pp_static_param_t pp_params;
+#elif POSTPROCESS_TYPE == POSTPROCESS_OD_BLAZEFACE_UI
+  od_blazeface_pp_static_param_t pp_params;
 #else
   #error "PostProcessing type not supported"
 #endif
